@@ -1,0 +1,19 @@
+{
+  "name": "pikaz-builder-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "dev": "pm2 start app.js --watch",
+    "stop": "pm2 stop app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.13.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-router": "^9.0.1",
+    "pikaz-shell": "^0.1.3"
+  }
+}
