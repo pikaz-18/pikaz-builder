@@ -2,12 +2,16 @@
  * @Author: zouzheng
  * @Date: 2020-06-22 10:51:39
  * @LastEditors: zouzheng
- * @LastEditTime: 2020-06-22 17:16:12
+ * @LastEditTime: 2020-06-23 11:37:57
  * @Description: 这是处理组件（页面）
  */
 // Koa
 const Koa = require('koa');
 const app = new Koa();
+
+// 跨域设置
+const cors = require('koa2-cors');
+app.use(cors());
 
 // 路由
 const Router = require('koa-router');
@@ -69,6 +73,7 @@ router.post('/list', async ctx => {
  */
 router.post('/add', async ctx => {
   const { name, git, path, build } = ctx.request.body
+  ctx.body = { code: 500, data: { name, git, path, build }, message: '已存在相同名称的项目' };
   const data = JSON.parse(fs.readFileSync('./base.json', 'utf-8'));
   const gitProject = data.project.find(item => item.name === name)
   if (gitProject) {
@@ -112,6 +117,11 @@ router.post('/edit', async ctx => {
   }
 })
 
+/**
+ * @name: 删除
+ * @param {String} name/删除项目的名称
+ * @return: 
+ */
 router.post('/del', async ctx => {
   const { name } = ctx.request.body
   const data = JSON.parse(fs.readFileSync('./base.json', 'utf-8'));
