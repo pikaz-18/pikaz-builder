@@ -2,25 +2,38 @@
  * @Author: zouzheng
  * @Date: 2020-06-22 17:48:54
  * @LastEditors: zouzheng
- * @LastEditTime: 2020-06-22 18:11:53
+ * @LastEditTime: 2020-06-24 11:18:33
  * @Description: 这是XXX组件（页面）
 --> 
 # 前端自动化打包部署
 
-## Project setup
+## api接口启动
+如果全局安装pm2，则
+```bash
+cd /api
+npm run dev
 ```
-npm install
+如果没安装pm2，则
+```bash
+cd /api
+node app.js
 ```
 
-### Compiles and hot-reloads for development
-```
+## 项目管理界面启动
+```bash
+cd /admin
+npm install 
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
+### 接口文档
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+地址为http://127.0.0.1:3000
+
+接口|请求方式|说明|参数
+-|-|-|-
+/add|POST|添加项目|function({name:"项目名称", git:"项目git地址", path:"项目创建路径", build:"项目打包命令"})
+/edit|POST|修改项目（项目名称不可修改，如需修改，请先删除再添加）|function({name:"项目名称", git:"项目git地址", path:"项目路径", build:"项目打包命令"})
+/del|POST|删除项目|function({name:"项目名称"})
+/list|POST|查询项目列表|function()
+/build|POST|构建项目|function({name:"项目名称"})

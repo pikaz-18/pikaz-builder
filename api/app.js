@@ -2,7 +2,7 @@
  * @Author: zouzheng
  * @Date: 2020-06-22 10:51:39
  * @LastEditors: zouzheng
- * @LastEditTime: 2020-06-23 11:37:57
+ * @LastEditTime: 2020-06-24 10:59:44
  * @Description: 这是处理组件（页面）
  */
 // Koa
@@ -28,30 +28,6 @@ const shell = require('pikaz-shell');
 // 启动路由
 app.use(router.routes()).use(router.allowedMethods())
 
-/**
- * @name: 构建
- * @param {String} name/项目名称 
- * @return: 
- */
-router.post('/build', async ctx => {
-  const { name } = ctx.request.body
-  // 查找项目
-  const data = JSON.parse(fs.readFileSync('./base.json', 'utf-8'));
-  const index = data.project.findIndex(item => item.name === name)
-  if (index === -1) {
-    ctx.body = { code: 500, data: null, message: `${name}项目文件不存在` };
-  } else {
-    const project = data.project[index]
-    const path = `${project.path}/${project.projectName}`
-    // 删除node_modules文件夹并安装依赖打包
-    const result = await shell([{ cmd: ["rd/s/q node_modules", "npm install", project.build], path }])
-    if (result === true) {
-      ctx.body = { code: 200, data: null, message: "build成功" };
-    } else {
-      ctx.body = { code: 500, data: null, message: "build失败" };
-    }
-  }
-})
 
 /**
  * @name: 查询列表
@@ -59,8 +35,8 @@ router.post('/build', async ctx => {
  * @return: 
  */
 router.post('/list', async ctx => {
-  const { project, nginx } = fs.readFileSync('./base.json', 'utf-8');
-  ctx.body = { code: 200, data: { project, nginx } };
+  const { project, nginx } = JSON.parse(fs.readFileSync('./base.json', 'utf-8'));
+  ctx.body = { code: 200, data: { project, nginx }, message: '查询成功' };
 })
 
 /**
@@ -84,7 +60,7 @@ router.post('/add', async ctx => {
   const n = git.split('/')
   const projectName = n[n.length - 1].replace('.git', '')
   // clone项目并安装依赖打包
-  const result = await shell([{ cmd: [`git clone ${git}`], path }, { cmd: ["npm install", build], path: `${path}/${projectName}` }])
+  const result = await shell([{ cmd: [`git clone ${git}`], path }])
   if (result === true) {
     // 添加入配置中
     data.project.push({ name, git, path, projectName, build })
@@ -97,13 +73,14 @@ router.post('/add', async ctx => {
 
 /**
  * @name: 编辑
- * @param {String} name/原项目名称
- * @param {String} reName/修改的项目名称
+ * @param {String} name/项目名称
+ * @param {String} git/项目git地址
+ * @param {String} path/项目所在文件夹位置
  * @param {String} build/打包命令
  * @return: 
  */
 router.post('/edit', async ctx => {
-  const { name, reName, build } = ctx.request.body
+  const { name, git, path, build } = ctx.request.body
   const data = JSON.parse(fs.readFileSync('./base.json', 'utf-8'));
   const index = data.project.findIndex(item => item.name === name)
   if (index === -1) {
@@ -111,7 +88,7 @@ router.post('/edit', async ctx => {
     return
   } else {
     // 配置修改项目
-    data.project[index] = { ...data.project[index], name: reName, build }
+    data.project[index] = { ...data.project[index], name, git, path, build }
     fs.writeFileSync('./base.json', JSON.stringify(data))
     ctx.body = { code: 200, data: null, message: '修改成功' };
   }
@@ -140,6 +117,35 @@ router.post('/del', async ctx => {
       return
     }
     ctx.body = { code: 500, data: null, message: '删除失败' };
+  }
+})
+
+/**
+ * @name: 构建
+ * @param {String} name/项目名称 
+ * @return: 
+ */
+router.post('/build', async ctx => {
+  const { name } = ctx.request.body
+  // 查找项目
+  const data = JSON.parse(fs.readFileSync('./base.json', 'utf-8'));
+  const index = data.project.findIndex(item => item.name === name)
+  if (index === -1) {
+    ctx.body = { code: 500, data: null, message: `${name}项目文件不存在` };
+  } else {
+    const project = data.project[index]
+    const path = `${project.path}/${project.projectName}`
+    if (fs.existsSync(`${project.path}/node_modules`)) {
+      // 存在node_modules则删除
+      await shell([{ cmd: ["rd/s/q node_modules"], path }])
+    }
+    // 安装依赖打包
+    const result = await shell([{ cmd: ["npm install", project.build], path }])
+    if (result === true) {
+      ctx.body = { code: 200, data: null, message: "build成功" };
+    } else {
+      ctx.body = { code: 500, data: null, message: "build失败" };
+    }
   }
 })
 

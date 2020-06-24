@@ -2,7 +2,7 @@
  * @Author: zouzheng
  * @Date: 2020-06-22 17:48:49
  * @LastEditors: zouzheng
- * @LastEditTime: 2020-06-23 11:42:10
+ * @LastEditTime: 2020-06-24 11:13:35
  * @Description: 这是XXX组件（页面）
 --> 
 <template>
@@ -16,7 +16,7 @@
       <div class="project-item" v-for="(item,index) in projects" :key="item.name">
         <div>
           <span>项目名称：</span>
-          <input v-model="item.name">
+          <input v-model="item.name" disabled>
         </div>
         <div>
           <span>项目git地址：</span>
@@ -59,9 +59,9 @@
         </div>
       </div>
     </div>
-    <div class="loading" v-show="loading">
+    <div class="loading" v-show="loading.show">
       <transition name="el-fade-in-linear">
-        <div class="loading-item">加载中</div>
+        <div class="loading-item">{{loading.text}}</div>
       </transition>
     </div>
   </div>
@@ -79,48 +79,164 @@ export default {
       // 新增项目
       addProject: { name: "", git: "", path: "", build: "" },
       // api地址
-      api: "http://192.168.0.173:3000",
-      loading: false
+      api: "http://127.0.0.1:3000",
+      loading: {
+        text: "加载中",
+        show: false
+      }
     }
   },
+  created () {
+    this.getList()
+  },
   methods: {
+    /**
+     * @name: 获取项目列表
+     * @param {type} 
+     * @return: 
+     */
+    getList () {
+      fetch(`${this.api}/list`, {
+        method: 'POST',
+      }).then(res => {
+        res.json().then(data => {
+          if (data.code === 200) {
+            this.projects = data.data.project
+          } else {
+            this.message(data.message)
+          }
+        })
+      }).catch(err => {
+        console.log(err)
+        this.message(err)
+      })
+    },
     /**
      * @name: 构建
      * @param {type} 
      * @return: 
      */
-    build (index) {
-      fetch(url, {
-        method: 'POST', // or 'PUT'
-        body: this.addProject, // data can be `string` or {object}!
+    build (index, name) {
+      this.loadingOpen()
+      fetch(`${this.api}/build`, {
+        method: 'POST',
+        body: JSON.stringify({ name: name || this.projects[index].name }),
         headers: {
           'Content-Type': 'application/json'
         }
-      }).then(res => res.json()).catch(
-        err => {
-
+      }).then(res => {
+        res.json().then(data => {
+          this.message(data.message)
         })
+      }).catch(err => {
+        console.log(err)
+        this.message(err)
+      })
     },
+    /**
+     * @name: 编辑
+     * @param {type} 
+     * @return: 
+     */
     edit (index) {
-
-    },
-    del (index) {
-
-    },
-    add () {
-      console.log(this.addProject)
-      fetch(`${this.api}/add`, {
-        method: 'POST', // or 'PUT'
-        body: { ...this.addProject }, // data can be `string` or {object}!
+      this.loadingOpen()
+      fetch(`${this.api}/edit`, {
+        method: 'POST',
+        body: JSON.stringify(this.projects[index]),
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'application/json'
         }
       }).then(res => {
-        console.log(res)
-      }).catch(
-        err => {
-
+        res.json().then(data => {
+          if (data.code === 200) {
+            this.build(index)
+          }
+          this.message(data.message)
         })
+      }).catch(err => {
+        console.log(err)
+        this.message(err)
+      })
+    },
+    /**
+     * @name: 删除
+     * @param {type} 
+     * @return: 
+     */
+    del (index) {
+      this.loadingOpen()
+      fetch(`${this.api}/del`, {
+        method: 'POST',
+        body: JSON.stringify({ name: this.projects[index].name }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(res => {
+        res.json().then(data => {
+          if (data.code === 200) {
+            this.getList()
+          }
+          this.message(data.message)
+        })
+      }).catch(err => {
+        console.log(err)
+        this.message(err)
+      })
+    },
+    /**
+     * @name: 添加
+     * @param {type} 
+     * @return: 
+     */
+    add () {
+      this.loadingOpen()
+      fetch(`${this.api}/add`, {
+        method: 'POST',
+        body: JSON.stringify(this.addProject),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(res => {
+        res.json().then(data => {
+          if (data.code === 200) {
+            this.build(-1, this.addProject.name)
+            this.addProject = { name: "", git: "", path: "", build: "" }
+            this.getList()
+          } else {
+            this.message(data.message)
+          }
+        })
+      }).catch(err => {
+        console.log(err)
+        this.message(err)
+      })
+    },
+    /**
+     * @name: 提示信息 
+     * @param {String} text/提示文字
+     * @return: 
+     */
+    message (text) {
+      this.loading = { show: true, text: text }
+      setTimeout(() => {
+        this.loading = { show: false, text: "加载中" }
+      }, 1000)
+    },
+    /**
+     * @name: loading显示
+     * @param {type} 
+     * @return: 
+     */
+    loadingOpen () {
+      this.loading = { show: true, text: "加载中" }
+    },
+    /**
+     * @name: loading关闭
+     * @param {type} 
+     * @return: 
+     */
+    loadingClose () {
+      this.loading = { show: false, text: "加载中" }
     }
   },
 }
@@ -164,7 +280,7 @@ export default {
   z-index: 9999;
 }
 .loading-item {
-  width: 100px;
+  width: 200px;
   height: 40px;
   background: lightgray;
   display: flex;
