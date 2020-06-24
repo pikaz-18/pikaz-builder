@@ -2,7 +2,7 @@
  * @Author: zouzheng
  * @Date: 2020-06-22 17:48:54
  * @LastEditors: zouzheng
- * @LastEditTime: 2020-06-24 11:18:33
+ * @LastEditTime: 2020-06-24 11:25:43
  * @Description: 这是XXX组件（页面）
 --> 
 # 前端自动化打包部署
@@ -37,3 +37,10 @@ npm run serve
 /del|POST|删除项目|function({name:"项目名称"})
 /list|POST|查询项目列表|function()
 /build|POST|构建项目|function({name:"项目名称"})
+
+### 说明
+
+1、如使用cnpm等，只需在接口文件app.js中将npm命令置换为cnpm或其他。
+
+2、本项目的操作命令行只针对win系统，如在linux系统下运行，只需将rd/s/q删除替换为rm -rf。
+
