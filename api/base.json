@@ -1,1 +1,4 @@
-{"project":[{"name":"运营后台管理","git":"http://www.90itclub.com/gitlab/huaxia/operations-management.git","path":"F:\\","projectName":"operations-management","build":"npm run test"}],"nginx":{}}
+{
+  "project": [],
+  "nginx": {}
+}
