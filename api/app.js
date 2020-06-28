@@ -2,7 +2,7 @@
  * @Author: zouzheng
  * @Date: 2020-06-22 10:51:39
  * @LastEditors: zouzheng
- * @LastEditTime: 2020-06-28 14:05:49
+ * @LastEditTime: 2020-06-28 15:32:44
  * @Description: 这是处理组件（页面）
  */
 // Koa
@@ -87,7 +87,7 @@ router.post('/edit', async ctx => {
     return
   } else {
     // 配置修改项目
-    data.project[index] = { ...data.project[index], name, git, path, build }
+    data.project[index] = { ...data.project[index], git, path, build }
     fs.writeFileSync('./base.json', JSON.stringify(data))
     ctx.body = { code: 200, data: null, message: '修改成功' };
   }
