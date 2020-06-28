@@ -2,7 +2,7 @@
  * @Author: zouzheng
  * @Date: 2020-06-22 17:48:54
  * @LastEditors: zouzheng
- * @LastEditTime: 2020-06-28 14:26:20
+ * @LastEditTime: 2020-06-28 14:36:34
  * @Description: 这是XXX组件（页面）
 --> 
 # 前端自动化打包部署
@@ -25,6 +25,21 @@ cd /admin
 npm install 
 npm run serve
 ```
+
+## 使用
+启动api服务，启动项目管理界面。
+
+界面输入框中分别输入:
+
+项目名称：pikaz-excel-js
+
+项目git地址：https://github.com/pikaz-18/pikaz-excel-js.git
+
+项目路径：D:\
+
+打包命令：npm run build
+
+点击添加，即可在D盘下载打包一个pikaz-excel-js插件项目
 
 ### 接口文档
 
