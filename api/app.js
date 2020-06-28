@@ -2,7 +2,7 @@
  * @Author: zouzheng
  * @Date: 2020-06-22 10:51:39
  * @LastEditors: zouzheng
- * @LastEditTime: 2020-06-24 11:27:02
+ * @LastEditTime: 2020-06-28 14:05:49
  * @Description: 这是处理组件（页面）
  */
 // Koa
@@ -49,7 +49,6 @@ router.post('/list', async ctx => {
  */
 router.post('/add', async ctx => {
   const { name, git, path, build } = ctx.request.body
-  ctx.body = { code: 500, data: { name, git, path, build }, message: '已存在相同名称的项目' };
   const data = JSON.parse(fs.readFileSync('./base.json', 'utf-8'));
   const gitProject = data.project.find(item => item.name === name)
   if (gitProject) {
@@ -135,12 +134,12 @@ router.post('/build', async ctx => {
   } else {
     const project = data.project[index]
     const path = `${project.path}/${project.projectName}`
-    if (fs.existsSync(`${project.path}/node_modules`)) {
+    if (fs.existsSync(`${path}/node_modules`)) {
       // 存在node_modules则删除
       await shell([{ cmd: ["rd/s/q node_modules"], path }])
     }
     // 安装依赖打包
-    const result = await shell([{ cmd: ["npm install", project.build], path }])
+    const result = await shell([{ cmd: ["git pull", "npm install", project.build], path }])
     if (result === true) {
       ctx.body = { code: 200, data: null, message: "build成功" };
     } else {

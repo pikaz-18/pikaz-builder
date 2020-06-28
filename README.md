@@ -2,7 +2,7 @@
  * @Author: zouzheng
  * @Date: 2020-06-22 17:48:54
  * @LastEditors: zouzheng
- * @LastEditTime: 2020-06-24 11:25:43
+ * @LastEditTime: 2020-06-28 14:26:20
  * @Description: 这是XXX组件（页面）
 --> 
 # 前端自动化打包部署
@@ -28,7 +28,7 @@ npm run serve
 
 ### 接口文档
 
-地址为http://127.0.0.1:3000
+端口为3000，本地可访问http://127.0.0.1:3000
 
 接口|请求方式|说明|参数
 -|-|-|-
@@ -40,7 +40,9 @@ npm run serve
 
 ### 说明
 
-1、如使用cnpm等，只需在接口文件app.js中将npm命令置换为cnpm或其他。
+1、如使用cnpm,yarn等，只需在接口文件app.js中将npm命令置换为cnpm或yarn命令。
 
 2、本项目的操作命令行只针对win系统，如在linux系统下运行，只需将rd/s/q删除替换为rm -rf。
+
+3、本项目仅提供最简实现，如需其他操作，可自己实现。
 

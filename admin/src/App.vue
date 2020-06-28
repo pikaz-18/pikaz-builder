@@ -2,8 +2,8 @@
  * @Author: zouzheng
  * @Date: 2020-06-22 17:48:49
  * @LastEditors: zouzheng
- * @LastEditTime: 2020-06-24 11:13:35
- * @Description: 这是XXX组件（页面）
+ * @LastEditTime: 2020-06-28 14:27:10
+ * @Description: 这是部署平台界面组件（页面）
 --> 
 <template>
   <div id="app">
@@ -78,7 +78,7 @@ export default {
       projects: [],
       // 新增项目
       addProject: { name: "", git: "", path: "", build: "" },
-      // api地址
+      // api地址，ip为服务器ip
       api: "http://127.0.0.1:3000",
       loading: {
         text: "加载中",
